@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Kuils River Rugby Club"
+description = "A fundraising website for Kuils River Rugby Club's R250,000 gym project, with campaign information, donation options, sponsorship details and club pages."
+version = "1.0.0"
+id = "artifacts/kuils-river-rugby"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19849
+
+[services.development]
+run = "pnpm --filter @workspace/kuils-river-rugby run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/kuils-river-rugby", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/kuils-river-rugby/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19849"
+BASE_PATH = "/"
