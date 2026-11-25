@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -6,7 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import {
   ArrowDownRight, ArrowRight, Award, Check, ChevronLeft, ChevronRight,
-  Dumbbell, Heart, Menu, ShieldCheck, Sparkles, Trophy, Users, X,
+  Dumbbell, Facebook, Heart, Instagram, Menu, ShieldCheck, Sparkles, Trophy, Users, X, Youtube,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import clubLogo from '@assets/image_1795617938523.png';
@@ -68,13 +68,19 @@ function Footer() {
         </Link>
         <div className="footer-slogan display">Stronger <i>together</i></div>
         <div className="footer-contact">
+          <div className="footer-socials" aria-label="Social media channels">
+            <span role="img" aria-label="Facebook"><Facebook aria-hidden="true" /></span>
+            <span role="img" aria-label="Instagram"><Instagram aria-hidden="true" /></span>
+            <span role="img" aria-label="YouTube"><Youtube aria-hidden="true" /></span>
+          </div>
+          <p>Official social links will be added when confirmed.</p>
           <p>One club. One community. A stronger future.</p>
           <Link className="btn btn-red" href="/contact">Contact the club <ArrowRight size={15} /></Link>
         </div>
       </div>
       <div className="footer-ribbon" aria-hidden="true"><span /><span /></div>
       <div className="footer-legal wrap">
-        <span>© 2025 Kuils River Rugby Club</span>
+        <span>© {new Date().getFullYear()} Kuils River Rugby Club</span>
         <div><Link href="/privacy">Privacy policy</Link><Link href="/terms">Terms &amp; conditions</Link><Link href="/contact#faq">FAQ</Link></div>
       </div>
     </footer>
@@ -301,6 +307,70 @@ function Legal({ terms }: { terms: boolean }) {
   </main></Shell>;
 }
 
+const pageMeta: Record<string, { title: string; description: string }> = {
+  '/': {
+    title: 'Kuils River Rugby Club Gym Fundraiser | Stronger Together',
+    description: 'Help Kuils River Rugby Club raise R250,000 for a new gym supporting player development, safer training, and the local rugby community.',
+  },
+  '/about': {
+    title: 'About Kuils River Rugby Club | Community Rugby',
+    description: 'Learn about Kuils River Rugby Club, established in 1994, and the community-focused gym campaign building a stronger future for players.',
+  },
+  '/gym-project': {
+    title: 'Kuils River Rugby Club Gym Project | R250,000 Goal',
+    description: 'Explore the plan to build a dedicated gym for strength, fitness, youth development, and safer training at Kuils River Rugby Club.',
+  },
+  '/donate': {
+    title: 'Donate to Kuils River Rugby Club’s Gym Project',
+    description: 'Choose a contribution towards the Kuils River Rugby Club R250,000 gym campaign. Online payments are not enabled yet.',
+  },
+  '/sponsors': {
+    title: 'Sponsor Kuils River Rugby Club’s New Gym Campaign',
+    description: 'Partner with Kuils River Rugby Club to support player development and a lasting community gym project.',
+  },
+  '/contact': {
+    title: 'Contact Kuils River Rugby Club | Gym Campaign',
+    description: 'Find campaign answers and learn how to connect with Kuils River Rugby Club about the new gym project.',
+  },
+  '/thank-you': {
+    title: 'Thank You | Kuils River Rugby Club',
+    description: 'A campaign message from Kuils River Rugby Club supporters. Donation submissions are not enabled yet.',
+  },
+  '/payment-failed': {
+    title: 'Payment Not Completed | Kuils River Rugby Club',
+    description: 'Online payments are not enabled for the Kuils River Rugby Club gym campaign. No payment was attempted.',
+  },
+  '/privacy': {
+    title: 'Privacy Policy | Kuils River Rugby Club',
+    description: 'Read how the Kuils River Rugby Club campaign website currently handles information and donation features.',
+  },
+  '/terms': {
+    title: 'Terms and Conditions | Kuils River Rugby Club',
+    description: 'Review the current terms for the Kuils River Rugby Club gym fundraising campaign website.',
+  },
+};
+
+function PageMetadata() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    const path = location.split('?')[0] || '/';
+    const meta = pageMeta[path] ?? {
+      title: 'Kuils River Rugby Club | Gym Campaign',
+      description: 'Support the Kuils River Rugby Club R250,000 gym fundraising campaign.',
+    };
+
+    document.title = meta.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', meta.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', meta.description);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', meta.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', meta.description);
+  }, [location]);
+
+  return null;
+}
+
 function Router() {
   const [location] = useLocation();
   return <ErrorBoundary resetKey={location}><Switch>
@@ -319,7 +389,7 @@ function Router() {
 }
 
 function App() {
-  return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><PageMetadata /><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
 }
 
 export default App;
