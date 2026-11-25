@@ -72,6 +72,9 @@ onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
   - msw
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
   - unrs-resolver
 
 overrides:

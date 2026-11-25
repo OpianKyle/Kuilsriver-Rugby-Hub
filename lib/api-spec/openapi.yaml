@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: fundraising
+    description: Public fundraising campaign data
 paths:
   /healthz:
     get:
@@ -24,6 +26,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /fundraising/summary:
+    get:
+      operationId: getFundraisingSummary
+      tags: [fundraising]
+      summary: Get verified fundraising progress
+      description: Returns the goal and totals from confirmed donations only
+      responses:
+        "200":
+          description: Current fundraising progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FundraisingSummary"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +48,20 @@ components:
           type: string
       required:
         - status
+    FundraisingSummary:
+      type: object
+      properties:
+        goalAmount:
+          type: number
+        raisedAmount:
+          type: number
+        progressPercent:
+          type: number
+        verifiedDonationCount:
+          type: integer
+      required:
+        - goalAmount
+        - raisedAmount
+        - progressPercent
+        - verifiedDonationCount
 

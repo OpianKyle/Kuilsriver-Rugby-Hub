@@ -4,6 +4,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import { useGetFundraisingSummary } from '@workspace/api-client-react';
 import {
   ArrowDownRight, ArrowRight, Award, Check, ChevronLeft, ChevronRight,
   Dumbbell, Facebook, Heart, Instagram, Menu, ShieldCheck, Sparkles, Trophy, Users, X, Youtube,
@@ -111,19 +112,40 @@ function Hero() {
 }
 
 function Progress() {
+  const { data, isError } = useGetFundraisingSummary({
+    query: { refetchInterval: 30_000, retry: 1 },
+  });
+  const goalAmount = data?.goalAmount ?? 250_000;
+  const raisedText = isError ? 'Unavailable' : data ? fmt(data.raisedAmount) : '…';
+  const progressText = isError
+    ? '—'
+    : data
+      ? `${Math.round(data.progressPercent)}%`
+      : '…';
+  const donationCountText = isError
+    ? '—'
+    : data
+      ? data.verifiedDonationCount.toLocaleString('en-ZA')
+      : '…';
+  const progressNotice = isError
+    ? 'Live fundraising totals are temporarily unavailable.'
+    : data
+      ? 'Only confirmed donations are included. Totals refresh automatically.'
+      : 'Loading confirmed fundraising totals…';
+
   return (
     <section className="progress-wrap wrap" aria-label="Fundraising campaign progress">
       <div className="progress-panel">
         <div className="progress-top">
-          <div className="goal-figure"><strong>R250,000</strong><span>Fundraising goal</span></div>
-          <div className="progress-stat"><Trophy /><b>R0</b><span>Raised</span></div>
-          <div className="progress-stat"><Sparkles /><b>R250,000</b><span>Goal</span></div>
-          <div className="progress-stat"><Award /><b>0%</b><span>Complete</span></div>
-          <div className="progress-stat"><Users /><b>0</b><span>Verified donations</span></div>
+          <div className="goal-figure"><strong>{fmt(goalAmount)}</strong><span>Fundraising goal</span></div>
+          <div className="progress-stat"><Trophy /><b>{raisedText}</b><span>Raised</span></div>
+          <div className="progress-stat"><Sparkles /><b>{fmt(goalAmount)}</b><span>Goal</span></div>
+          <div className="progress-stat"><Award /><b>{progressText}</b><span>Complete</span></div>
+          <div className="progress-stat"><Users /><b>{donationCountText}</b><span>Verified donations</span></div>
         </div>
-        <div className="progress-track" role="progressbar" aria-label="Fundraising progress, baseline" aria-valuemin={0} aria-valuemax={250000} aria-valuenow={0}><span /></div>
+        <div className="progress-track" role="progressbar" aria-label="Verified fundraising progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={data?.progressPercent} aria-valuetext={isError ? 'Currently unavailable' : `${progressText} complete`}><span style={{ width: `${data?.progressPercent ?? 0}%` }} /></div>
         <p>Every rand brings us one step closer to building a stronger Kuils River Rugby Club.</p>
-        <small>R0 is the campaign’s starting baseline. Fundraising totals are not yet live.</small>
+        <small>{progressNotice}</small>
       </div>
     </section>
   );

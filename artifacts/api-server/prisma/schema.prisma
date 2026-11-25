@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum DonationStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  FAILED
+}
+
+enum DonationMethod {
+  EFT
+  PAYFAST
+}
+
+model Donation {
+  id           String         @id @default(cuid()) @db.VarChar(36)
+  reference    String         @unique @db.VarChar(80)
+  amountCents  Int            @map("amount_cents")
+  currency     String         @default("ZAR") @db.Char(3)
+  status       DonationStatus @default(PENDING)
+  method       DonationMethod
+  donorName    String?        @map("donor_name") @db.VarChar(160)
+  donorEmail   String?        @map("donor_email") @db.VarChar(254)
+  isAnonymous  Boolean        @default(false) @map("is_anonymous")
+  confirmedAt  DateTime?      @map("confirmed_at") @db.DateTime(3)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@index([status, confirmedAt])
+  @@map("kr_donations")
+}
