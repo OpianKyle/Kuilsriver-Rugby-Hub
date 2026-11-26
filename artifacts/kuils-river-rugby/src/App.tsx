@@ -95,7 +95,7 @@ function Shell({ children }: { children: ReactNode }) {
 function Hero() {
   return (
     <section className="hero">
-      <div className="hero-photo" role="img" aria-label="Kuils River rugby player carrying the ball during a match" />
+      <div className="hero-photo" role="img" aria-label="Rugby players advancing with the ball during a match" />
       <div className="hero-shade" />
       <div className="wrap hero-content">
         <p className="hero-eyebrow"><span /> Kuils River Rugby Club · Gym campaign</p>
