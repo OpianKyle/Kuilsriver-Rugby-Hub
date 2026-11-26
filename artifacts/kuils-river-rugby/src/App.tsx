@@ -10,10 +10,10 @@ import {
   Dumbbell, Facebook, Heart, Instagram, Menu, ShieldCheck, Sparkles, Trophy, Users, X, Youtube,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
-import clubLogo from '@assets/image_1795617938523.png';
 import './App.css';
 
 const queryClient = new QueryClient();
+const clubLogo = '/images/club-logo.png';
 const image = (name: string) => `/images/${name}`;
 const navItems = [
   { label: 'Home', href: '/' },

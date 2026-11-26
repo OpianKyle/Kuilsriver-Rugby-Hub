@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
@@ -30,5 +32,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+const webRoot = path.resolve(process.cwd(), "../kuils-river-rugby/dist/public");
+const webIndex = path.join(webRoot, "index.html");
+
+if (existsSync(webIndex)) {
+  app.use(express.static(webRoot));
+  app.get("/{*splat}", (req, res): void => {
+    if (req.path === "/api" || req.path.startsWith("/api/")) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+
+    res.sendFile(webIndex);
+  });
+}
 
 export default app;

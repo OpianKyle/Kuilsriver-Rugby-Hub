@@ -1,0 +1,1 @@
+- [Render build considerations](render-build-considerations.md) — keep deployment assets in tracked artifact paths and invoke Render's existing `pnpm` directly.
